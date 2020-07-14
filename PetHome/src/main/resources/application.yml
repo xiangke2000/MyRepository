@@ -1,0 +1,14 @@
+server:
+  port: 80
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://127.0.0.1:3306/pethome
+    driver-class-name: com.mysql.jdbc.Driver
+logging:
+  level:
+    cn:
+      itsource: trace
+mybatis:
+  type-aliases-package: cn.itsource.pethome.org.domain,cn.itsource.pethome.org.query

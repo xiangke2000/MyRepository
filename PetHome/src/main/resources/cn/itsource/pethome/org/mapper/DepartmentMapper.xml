@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itsource.pethome.org.mapper.DepartmentMapper">
+    <delete id="delete">
+        DELETE from t_department WHERE id=#{id}
+    </delete>
+    <delete id="deleteMore" parameterType="Long">
+        DELETE from t_department WHERE id IN
+        <foreach  collection="array" open="(" close=")" item="id" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        UPDATE t_department set sn=#{sn},name=#{name},state=#{state},parent_id=#{parent.id} WHERE id=#{id}
+    </update>
+    <!--
+    useGeneratedKeys="true" 自动给主键设置值
+    keyColumn="id" keyProperty="id"数据库字段和实体类字段一致
+    void save(Department department);
+    -->
+    <insert id="save" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO t_department (sn,name,state,parent_id)values (#{sn},#{name},#{state},#{parent.id})
+    </insert>
+    <resultMap id="deptMap" type="Department">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="sn" property="sn"/>
+        <result column="state" property="state"/>
+        <association property="manager" javaType="Employee">
+            <id column="username" property="username"/>
+        </association>
+        <association property="parent" javaType="Department">
+            <id column="pid" property="id"/>
+            <result column="pname" property="name"/>
+        </association>
+    </resultMap>
+    <select id="findByQuery" resultMap="deptMap">
+        SELECT
+        t1.*,t2.id pid,t2.name pname,t3.username
+        FROM
+        t_department t1
+        LEFT JOIN t_department t2 ON t1.parent_id = t2.id
+        LEFT JOIN t_employee t3 ON t1.manager_id = t3.id
+        <include refid="query"/>
+        LIMIT #{start},#{pageSize}
+    </select>
+    <select id="queryCount" resultType="Integer">
+        SELECT COUNT(*) FROM t_department t1
+        <include refid="query"/>
+    </select>
+    <select id="findOne" resultType="Department">
+        SELECT * FROM t_department WHERE id=#{id}
+    </select>
+    <select id="findAll" resultType="Department">
+        SELECT * FROM t_department
+    </select>
+    <sql id="query">
+        <where>
+            <if test="keyWord!=null and !''.equals(keyWord.trim())">
+                and t1.name LIKE CONCAT('%',#{keyWord},'%')
+            </if>
+        </where>
+    </sql>
+</mapper>
