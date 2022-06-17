@@ -58,7 +58,7 @@
             <!--把对象转为json字符串，或者把字符串转为对象-->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
+            <version>1.2.83</version>
         </dependency>
 
         <dependency>
